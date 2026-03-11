@@ -8,7 +8,6 @@ namespace Laba2
     {
         private FileStream _strFs;               // поток для файла со строками
         private int _maxStrSize;                  // максимальная длина строки
-        private string _mainFileName;             // имя основного файла
         private string _stringsFileName;          // имя файла для хранения строк
 
         // Размер элемента в основном файле = 4 байта (адрес)
@@ -16,7 +15,7 @@ namespace Laba2
 
         public VirtualVarCharArray(string filename, long arraySize, int maxStrSize)
         {
-            _mainFileName = filename;
+            this.fileName = filename;
             _stringsFileName = filename + ".str";  // например, test.dat.str
             _maxStrSize = maxStrSize;
             this.arraySize = arraySize;
@@ -33,8 +32,9 @@ namespace Laba2
             }
         }
 
-        public void Create(string fileName, long size, int maxStrSize = 0)
+        public void Create(string fileName, long size, int maxStrSize)
         {
+            Validator.ValidateCreate(fileName, size, maxStrSize);
             // Создаём основной файл
             using (var stream = new FileStream(fileName, FileMode.Create))
             {
@@ -56,10 +56,7 @@ namespace Laba2
             }
 
             // Создаём файл для строк (пустой)
-            using (var strStream = new FileStream(_stringsFileName, FileMode.Create))
-            {
-                // Можно сразу ничего не писать
-            }
+            using (var strStream = new FileStream(_stringsFileName, FileMode.Create)) { }
 
             // Открываем основной файл для работы
             fs = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
@@ -127,11 +124,9 @@ namespace Laba2
         // Запись строки
         public void Input(long index, object value)
         {
-            string str = value as string;
-            if (str == null)
-                throw new ArgumentException("Value must be a string");
-            if (str.Length > _maxStrSize)
-                throw new ArgumentException($"String too long. Max length is {_maxStrSize}");
+            Validator.ValidateInput(index, value, arraySize, _maxStrSize);
+
+            string str = (string)value;
 
             // Сначала записываем/обновляем строку в файле строк
             long stringPosition = WriteStringToFile(str);
@@ -188,32 +183,6 @@ namespace Laba2
         {
             base.Close();
             _strFs?.Close();
-        }
-
-        // Явная реализация интерфейса
-        void IVirtualArray.Create(string fileName, long size, int maxStrSize)
-        {
-            Create(fileName, size, maxStrSize);
-        }
-
-        void IVirtualArray.Open(string fileName)
-        {
-            Open(fileName);
-        }
-
-        void IVirtualArray.Input(long index, object value)
-        {
-            Input(index, value);
-        }
-
-        object IVirtualArray.Print(long index)
-        {
-            return Print(index);
-        }
-
-        void IVirtualArray.Close()
-        {
-            Close();
         }
     }
 }

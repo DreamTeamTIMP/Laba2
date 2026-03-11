@@ -7,7 +7,6 @@ namespace Laba2
     public class VirtualCharArray : VirtualMemoryArray, IVirtualArray
     {
         private int _stringLength;          // фиксированная длина строки (в символах)
-        private string _filePath;
 
         // Реализация абстрактного свойства базового класса
         protected override int ElementSize => _stringLength; // 1 байт на символ (ASCII)
@@ -18,7 +17,7 @@ namespace Laba2
         /// <param name="stringLength">Фиксированная длина строки в символах</param>
         public VirtualCharArray(string filename, long arraySize, int stringLength)
         {
-            _filePath = filename;
+            this.fileName = filename;
             _stringLength = stringLength;
             this.arraySize = arraySize;
             maxBufferPages = Constants.BUFFER_SIZE;
@@ -35,10 +34,9 @@ namespace Laba2
         }
 
         // Создание нового файла
-        public void Create(string fileName, long size, int maxStrSize = 0)
+        public void Create(string fileName, long size, int maxStrSize)
         {
-            if (maxStrSize <= 0)
-                throw new ArgumentException("String length must be positive");
+            Validator.ValidateCreate(fileName, size, maxStrSize);
 
             _stringLength = maxStrSize;
             arraySize = size;
@@ -73,6 +71,7 @@ namespace Laba2
         // Открытие существующего файла
         public void Open(string fileName)
         {
+            
             fs = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
             using (var reader = new BinaryReader(fs, Encoding.ASCII, true))
             {
@@ -138,13 +137,10 @@ namespace Laba2
         // Реализация интерфейса IVirtualArray
         public void Input(long index, object value)
         {
-            string str = value as string;
-            if (str == null)
-                throw new ArgumentException("Value must be a string");
+            Validator.ValidateInput(index, (string)value, arraySize,_stringLength);
 
-            if (str.Length > _stringLength)
-                throw new ArgumentException($"String too long. Max length is {_stringLength}");
-
+            string str = (string)value;
+            
             // Дополняем пробелами до фиксированной длины
             string padded = str.PadRight(_stringLength, ' ');
             byte[] bytes = Encoding.ASCII.GetBytes(padded);
@@ -160,38 +156,6 @@ namespace Laba2
             byte[] bytes = ReadElementBytes(index);
             string result = Encoding.ASCII.GetString(bytes).TrimEnd(' ');
             return result;
-        }
-
-        // Close уже реализован в базовом классе
-        public override void Close()
-        {
-            base.Close();
-        }
-
-        // Явная реализация методов интерфейса (для полноты)
-        void IVirtualArray.Create(string fileName, long size, int maxStrSize)
-        {
-            Create(fileName, size, maxStrSize);
-        }
-
-        void IVirtualArray.Open(string fileName)
-        {
-            Open(fileName);
-        }
-
-        void IVirtualArray.Input(long index, object value)
-        {
-            Input(index, value);
-        }
-
-        object IVirtualArray.Print(long index)
-        {
-            return Print(index);
-        }
-
-        void IVirtualArray.Close()
-        {
-            Close();
         }
     }
 }

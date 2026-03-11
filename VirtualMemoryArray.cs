@@ -5,21 +5,14 @@ using System.Linq;
 
 namespace Laba2
 {
-    public interface IVirtualArray
-    {
-        void Create(string fileName, long size, int maxStrSize = 0);
-        void Open(string fileName);
-        void Input(long index, object value);
-        object Print(long index);
-        void Close();
-    }
 
     public interface ICreator { }
 
     public abstract partial class VirtualMemoryArray
     {
         protected FileStream fs;
-        protected List<Page> buffer = new();
+        protected string fileName;
+        protected List<Page> buffer = [];
         protected int maxBufferPages = Constants.BUFFER_SIZE;
         protected long arraySize;
         protected int elementsPerPage = Constants.ELEMS_PER_PAGE;
@@ -28,16 +21,10 @@ namespace Laba2
         protected abstract int ElementSize { get; }
 
         // Загрузка страницы из файла (специфична для типа)
-        protected virtual Page LoadPageFromFile(int pageNumber)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract Page LoadPageFromFile(int pageNumber);
 
         // Сохранение страницы в файл
-        protected virtual void SavePageToFile(Page page)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract void SavePageToFile(Page page);
 
         // Поиск индекса страницы в буфере, подгрузка при необходимости
         protected int? FindPageIndex(long elementIndex)
