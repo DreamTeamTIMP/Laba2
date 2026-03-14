@@ -3,20 +3,13 @@
 
     public abstract partial class VirtualMemoryArray
     {
-        protected class Page
+        protected class Page(int number, int dataSize)
         {
-            public int pageNumber;
-            public bool modified;
-            public DateTime lastAccess;
-            public byte[] bitmap = new byte[Constants.BITMAP_SIZE];//битовая карта(1 бит)
-            public byte[] data = new byte[Constants.PAGE_DATA_SIZE]; //данные страницы
-
-            public Page(int number)
-            {
-                pageNumber = number;
-                modified = false;
-                lastAccess = DateTime.Now;
-            }
+            public int pageNumber = number;
+            public bool modified = false;
+            public DateTime lastAccess = DateTime.Now;
+            public byte[] bitmap = new byte[Constants.BITMAP_SIZE];
+            public byte[] data = new byte[dataSize];
         }
     }
 }

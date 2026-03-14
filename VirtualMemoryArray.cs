@@ -5,19 +5,21 @@ using System.Linq;
 
 namespace Laba2
 {
-
     public interface ICreator { }
 
     public abstract partial class VirtualMemoryArray
     {
         protected FileStream fs;
         protected string fileName;
-        protected List<Page> buffer = [];
+        protected List<Page> buffer = new List<Page>();
         protected int maxBufferPages = Constants.BUFFER_SIZE;
         protected long arraySize;
         protected int elementsPerPage = Constants.ELEMS_PER_PAGE;
 
-        // Размер одного элемента в байтах (должен быть задан в производном классе)
+        // Размер данных страницы в байтах (устанавливается в производных классах)
+        protected int _pageDataSize;
+
+        // Размер одного элемента в байтах (задаётся в производном классе)
         protected abstract int ElementSize { get; }
 
         // Загрузка страницы из файла (специфична для типа)

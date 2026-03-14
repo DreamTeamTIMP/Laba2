@@ -11,5 +11,10 @@
         public const int CHAR_SIZE = 1;
         public const int BITMAP_SIZE = 16;
         public const int BUFFER_SIZE = 3;//минимум 3 страницы в памяти 
+
+        public const char ARRAY_TYPE_INT = 'I';
+        public const char ARRAY_TYPE_CHAR = 'C';
+        public const char ARRAY_TYPE_VARCHAR = 'V';
+        public const string SIGNATURE = "VM";
     }
 }
