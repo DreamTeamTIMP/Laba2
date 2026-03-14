@@ -207,6 +207,7 @@ namespace Laba2
 
                 if (type == 'I')
                 {
+                    fs.Close();
                     currentArray = new VirtualIntArray(fileName, arraySize);
                     currentFileName = fileName;
                     PrintSuccess($"Открыт массив целых чисел размером {arraySize} элементов.");
@@ -216,6 +217,7 @@ namespace Laba2
                     byte[] lenBytes = new byte[4];
                     fs.Read(lenBytes, 0, 4);
                     int strLen = BitConverter.ToInt32(lenBytes, 0);
+                    fs.Close();
                     currentArray = new VirtualCharArray(fileName, arraySize, strLen);
                     currentFileName = fileName;
                     PrintSuccess($"Открыт массив строк фиксированной длины ({strLen}) размером {arraySize} элементов.");
@@ -225,6 +227,7 @@ namespace Laba2
                     byte[] lenBytes = new byte[4];
                     fs.Read(lenBytes, 0, 4);
                     int maxLen = BitConverter.ToInt32(lenBytes, 0);
+                    fs.Close();
                     currentArray = new VirtualVarCharArray(fileName, arraySize, maxLen);
                     currentFileName = fileName;
                     PrintSuccess($"Открыт массив строк переменной длины (макс. {maxLen}) размером {arraySize} элементов.");

@@ -57,6 +57,10 @@
                 if (str.Length > strLength)
                     throw new ArgumentException($"Длина строки ({str.Length}) превышает максимально допустимую ({strLength}).");
             }
+            else if (value is int)
+            {
+
+            }
             else
             {
                 throw new ArgumentException($"Неподдерживаемый тип значения: {value.GetType()}. Ожидалось int или string.");

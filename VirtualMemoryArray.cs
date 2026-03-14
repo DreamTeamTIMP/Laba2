@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace Laba2
 {
-    public interface ICreator { }
-
     public abstract partial class VirtualMemoryArray
     {
         protected FileStream fs;
